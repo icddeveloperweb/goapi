@@ -2,25 +2,29 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"github.com/gorilla/mux"
 )
 
-// All Users
-func AllUsers(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "All Users Endpoint Hit!")
+
+func homeAPI(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Welcome to the API!")
 }
 
-// New User
-func NewUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "New User Endpoint Hit!")
+func handleRequest() {
+	var PORT = ":8082"
+	myRouter := mux.NewRouter().StrictSlash(true)
+	myRouter.HandleFunc("/api", homeAPI).Methods("GET")
+	myRouter.HandleFunc("/api/users", AllUsers).Methods("GET")
+	myRouter.HandleFunc("/api/user/{id}", UserbyID).Methods("GET")
+	myRouter.HandleFunc("/api/user", NewUser).Methods("POST")
+	myRouter.HandleFunc("/api/user/{id}", DeleteUser).Methods("DELETE")
+	myRouter.HandleFunc("/api/user/{id}", UpdateUser).Methods("PATCH")
+	log.Fatal(http.ListenAndServe(PORT,myRouter))
 }
 
-// Delete User
-func DeleteUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Delete User Endpoint Hit!")
-}
-
-// Update User
-func UpdateUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Update User Endpoint Hit!")
+func main() {
+	fmt.Println("GO lang ORM Test")
+	handleRequest()
 }
